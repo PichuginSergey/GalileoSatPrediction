@@ -3,6 +3,8 @@ import math
 import service
 import datetime
 
+NUMGAL = 30
+
 class GalAlm():
     def __init__(self):
         self.data = {name : 0 for name in almPars.TAGS}
@@ -10,9 +12,8 @@ class GalAlm():
 
 class GalAlmanachs():
     def __init__(self):
-        self.NGAL = 30
-        self.alm = []
-        self.alm = [GalAlm() for _ in range(self.NGAL)]
+        self.NUMGAL = 30
+        self.alm = [GalAlm() for _ in range(NUMGAL)]
         
     def initByRinex(self, data):
         # calc wna
@@ -94,3 +95,13 @@ class GalAlmanachs():
         sat[1] = xpk*sok + ypk*cik*cok
         sat[2] = ypk*sik
         return sat
+    
+class Angles():
+    def __init__(self):
+        self.azm = 0
+        self.elv = 0
+        self.valid = False
+
+class GalAngles():
+    def __init__(self):
+        self.alm = [Angles() for _ in range(NUMGAL)]
