@@ -26,13 +26,8 @@ class GalParser(xml.sax.handler.ContentHandler):
             self.fIssueDate = False
             
     def endDocument(self):
-        fp = open("data.txt", "w")
-        for tag in TAGS:
-            fp.write(tag + ": ")
-            for elm in self.data[tag]:
-               fp.write(str(elm) + " ")
-            fp.write("\n")
-            
+        pass
+    
     def getData(self):
         return (self.issueDate, self.data)
 

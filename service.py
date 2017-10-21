@@ -23,11 +23,11 @@ def utc_to_gps(curDateTime):
     NUM_DAYS_IN_WEEK = 7
     mounth = curDateTime.month
     ye = curDateTime.year - 1980
-    lpdays = ye/4 + 1
+    lpdays = ye//4 + 1
     if ( ((ye%4) == 0) and ((mounth) <= 2) ):
         lpdays -= 1
     de = ye*365 + doy[(mounth)-1] + curDateTime.day + lpdays - 6
-    wk = de / NUM_DAYS_IN_WEEK
+    wk = de // NUM_DAYS_IN_WEEK
     sec = (de%NUM_DAYS_IN_WEEK)*86400.0 + (curDateTime.hour)*3600.0 + (curDateTime.minute)*60.0 + (curDateTime.second)
 
     while(sec < 0.0):
@@ -55,9 +55,9 @@ def getCfgParam(name):
     cmd = fid.readline()
     dayPrediction = cmd[cmd.find("=")+1:-1]
     outFile = ""
-    mode = False
-    if dayPrediction == "True":
-        mode = True
+    mode = "Off"
+    if dayPrediction == "On":
+        mode = "On"
         cmd = fid.readline()
         outFile = cmd[cmd.find("=")+1:]
     fid.close()

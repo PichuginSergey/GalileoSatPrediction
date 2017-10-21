@@ -74,7 +74,7 @@ def nowTimePrediction(galAlm, xyz, elvMask):
     ang = angelsPrediction(curDateTime, galAlm, xyz)
     for idx in range(Galileo.NUMGAL):
         if ang.alm[idx].valid == True and ang.alm[idx].elv*180.0/pi > elvMask:
-            print(galAlm.alm[idx].data["SVID"], ang.alm[idx].azi*180.0/pi, ang.alm[idx].elv*180.0/pi)
+            print (galAlm.alm[idx].data["SVID"], ang.alm[idx].azi*180.0/pi, ang.alm[idx].elv*180.0/pi)
 
 # xyz, elvMask, almGalFile, mode, outFile
 def prediction(GalAlms, config):
@@ -82,7 +82,7 @@ def prediction(GalAlms, config):
     elvMask = config[1]
     mode = config[3]
     outFile = config[4]
-    if mode == 'False':
+    if mode == 'Off':
         nowTimePrediction(GalAlms, xyz, elvMask)
     else:
         dayPrediction(GalAlms, xyz, outFile, elvMask)

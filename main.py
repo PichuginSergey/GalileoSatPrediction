@@ -12,4 +12,5 @@ res = parser.parse(config[2])
 GalAlms = Galileo.GalAlmanachs()
 GalAlms.initByRinex(res)
 
+# Predict satellites
 svPrediction.prediction(GalAlms, config)

@@ -48,7 +48,7 @@ class GalAlmanachs():
         wna = self.alm[idx].data['wna']
         e = self.alm[idx].data['ecc']
         a = 29600 * 1000 + self.alm[idx].data['aSqRoot']**2
-        dwk = 2
+        dwk = wk-wna
         Tk = (dwk)*SECONDS_A_WEEK + sec - toa
         n0 = math.sqrt((GRAV_CONSTANT_GPS/(a*a*a)))
         Mk = self.alm[idx].data['m0'] + n0*Tk
