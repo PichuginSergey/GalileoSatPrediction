@@ -1,4 +1,6 @@
 from math import sin, cos, sqrt, atan, atan2, pi
+import Galileo
+import datetime
 
 def xyz2blh(xyz):
     major_radius = 6378137.0
@@ -65,17 +67,66 @@ def svAngles(xyz, sat):
     return (azi, elv)
 
 def getCfgParam(name):
-    xyz = [0, 0, 0]
-    name = "config.cfg"
+    
+    #Reference point
+    xyz = [0 for _ in range(6)]
     fid = open(name, "r")
-    for i in range(len(xyz)):
+    for i in range(3):
         cmd = fid.readline()
         xyz[i] = float(cmd[cmd.find("=")+1:-1])
+    xyz[3:] = xyz2blh(xyz)
     cmd = fid.readline()
     elv = float(cmd[cmd.find("=")+1:-1])
     cmd = fid.readline()
     alm = cmd[cmd.find("=")+1:-1]
     cmd = fid.readline()
-    dayPrediction = bool(cmd[cmd.find("=")+1:-1])
+    dayPrediction = cmd[cmd.find("=")+1:-1]
+    outFile = ""
+    mode = False
+    if dayPrediction == "True":
+        mode = True
+        cmd = fid.readline()
+        outFile = cmd[cmd.find("=")+1:]
     fid.close()
-    return (xyz, elv, alm, dayPrediction)
+    return (xyz, elv, alm, dayPrediction, outFile)
+
+def dayPrediction(galAlm, xyz, outFile, elvMask):
+
+    MINUIES_IN_DAY = 1439
+    MINUIES_IN_HOUR = 60
+    STEP = 1
+    
+    fid = open(outFile, "w")
+    out = ""
+    hh = 0
+    mm = 0
+    for t in range (MINUIES_IN_DAY):
+        mm += STEP
+        if mm == MINUIES_IN_HOUR:
+            mm = 0
+            hh += STEP
+        curDateTime = datetime.datetime.today()
+        curDateTime = curDateTime.replace(hour = hh, minute = mm, second = 0)
+        (wk, sec) = utc_to_gps(curDateTime)
+        out = str(hh*MINUIES_IN_HOUR + mm) + ' '
+        for idx in range(galAlm.NGAL):
+            if galAlm.alm[idx].valid == True:
+                sat = galAlm.getPos(idx, sec, wk)
+                (azi, elv) = svAngles(xyz, sat)
+            if elv > 0.0:
+                out += str(galAlm.alm[idx].data['SVID']) + " "
+            else:
+                out += "nan "        
+    fid.write(out + "\n")
+    fid.close()
+    print('Done')    
+
+def nowTimePredication(galAlm, xyz, elvMask):
+    curDateTime = datetime.datetime.today()
+    (wk, sec) = utc_to_gps(curDateTime)
+    for idx in range(galAlm.NGAL):
+        if galAlm.alm[idx].valid == True:
+            sat = galAlm.getPos(idx, sec, wk)
+            (azi, elv) = svAngles(xyz, sat)
+            if elv*180.0/pi > elvMask:
+                print(galAlm.alm[idx].data["SVID"], azi*180.0/pi, elv*180.0/pi)
